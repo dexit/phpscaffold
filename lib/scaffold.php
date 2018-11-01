@@ -1,4 +1,4 @@
-<?
+<?php
 class Scaffold {
 	public $table = array();
 
@@ -128,7 +128,7 @@ print_header(\"{$this->project['project_name']} » " . $this->_titleize($this->t
 ?>\n";
 
 $return_string .= $this->_build_form($this->columns, 'Add / Edit') . '
-<?
+<?php
 print_footer();
 ?>';
 

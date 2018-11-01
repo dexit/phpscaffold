@@ -1,5 +1,5 @@
 <?php
-include 'inc.functions.php';
+include './inc.functions.php';
 $msg = (isset($_GET['msg']) ? $_GET['msg'] : '');
 
 if (isset($_POST['user']) && isset($_POST['pass'])) {
@@ -32,7 +32,7 @@ if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true)
 </ul>
 <p><input type="submit" value="Login" /></p>
 </form>
-<?
+<?php
 } else {
 	echo '<p><a href="index.php">Go to Listing</a></p>';
 }
