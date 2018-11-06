@@ -11,7 +11,7 @@ if (!function_exists('options_range')) {
 $page = (isset($_GET['page']) ? $_GET['page'] : 1);
 $start = ($page-1) * $per_page;
 
-$num_results = mysql_result(mysql_query($count_sql), 0);
+$num_results = (int)mysqli_query($_conexao, $count_sql);
 $num_pages = ceil($num_results / $per_page);
 
 /* Mantain search and sorting parameters */
