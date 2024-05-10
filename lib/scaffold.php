@@ -1,4 +1,4 @@
-<?
+<?php
 class Scaffold {
 	public $table = array();
 
@@ -33,7 +33,7 @@ include('{$this->project['search_page']}');
 include('../inc.paging.php');
 
 /* Get selected entries! */
-\$sql = \"SELECT * FROM `{$this->table}` WHERE \$conds \" . get_order('{$this->table}') . \" LIMIT \$start,\$per_page\";
+\$sql = \"SELECT * FROM `{$this->table}` WHERE {$this->id_key} LIMIT \$start,\$per_page\";
 
 echo '<table>\n";
 		$return_string .= "  <tr>\n";
@@ -43,8 +43,8 @@ echo '<table>\n";
 		$return_string .= '    <th colspan="2" style="text-align:center">Actions</th>';
 		$return_string .= "\n  </tr>\n';
 
-\$r = mysql_query(\$sql) or trigger_error(mysql_error());
-while(\$row = mysql_fetch_array(\$r)) {\n";
+\$r = mysqli_query(\$_conexao,\$sql) or trigger_error(\$_conexao->error);
+while(\$row = \$r->fetch_array(MYSQLI_BOTH)) {\n";
 		$return_string .= "	echo '  <tr>\n";
 
 		foreach($this->columns as $v) {
@@ -80,8 +80,8 @@ print_footer();
 include('../inc.functions.php');\n\n";
 
 		$return_string .= "if (isset(\$_GET['delete'])) {
-	mysql_query(\"DELETE FROM `{$this->table}` WHERE `{$this->id_key}` = '\$_GET[{$this->id_key}]}'\");
-	\$msg = (mysql_affected_rows() ? 'Row deleted.' : 'Nothing deleted.');
+	mysqli_query(\$_conexao,\"DELETE FROM `{$this->table}` WHERE `{$this->id_key}` = '\$_GET[{$this->id_key}]}'\");
+	\$msg = (mysqli_affected_rows(\$_conexao) ? 'Row deleted.' : 'Nothing deleted.');
 	header('Location: {$this->project['list_page']}?msg='.\$msg);
 }
 
@@ -91,7 +91,7 @@ include('../inc.functions.php');\n\n";
 		$column_array = array();
 
 		$return_string .= "if (isset(\$_POST['submitted'])) {
-	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysql_real_escape_string(\$value); }\n";
+	foreach(\$_POST AS \$key => \$value) { \$_POST[\$key] = mysqli_real_escape_string(\$_conexao, \$value); }\n";
 		$insert = "REPLACE INTO `{$this->table}` (";
 		$counter = 0;
 		foreach($this->columns as $v) {
@@ -116,19 +116,20 @@ include('../inc.functions.php');\n\n";
 		$insert .= ');';
 
 		$return_string .= "	\$sql = \"$insert\";
-	mysql_query(\$sql) or die(mysql_error());
-	\$msg = (mysql_affected_rows()) ? 'Edited row.' : 'Nothing changed.';
+	\$r = mysqli_query(\$_conexao, \$sql) or die(\$_conexao->error);
+	\$msg = (mysqli_affected_rows(\$_conexao)) ? 'Edited row.' : 'Nothing changed.';
 	header('Location: {$this->project['list_page']}?msg='.\$msg);
 }
 
 
 print_header(\"{$this->project['project_name']} » " . $this->_titleize($this->table) . " » \$action\");
 
-\$row = mysql_fetch_array ( mysql_query(\"SELECT * FROM `{$this->table}` WHERE `{$this->id_key}` = '\${$this->id_key}' \"));
+\$r = mysqli_query(\$_conexao, \"SELECT * FROM `{$this->table}` WHERE `{$this->id_key}` = '\${$this->id_key}' \") or die(\$_conexao->error);
+\$row = \$r->fetch_array(MYSQLI_BOTH);
 ?>\n";
 
 $return_string .= $this->_build_form($this->columns, 'Add / Edit') . '
-<?
+<?php
 print_footer();
 ?>';
 
